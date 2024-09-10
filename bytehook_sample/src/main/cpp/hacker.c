@@ -23,7 +23,14 @@
 typedef int (*open_t)(const char *, int, mode_t);
 typedef int (*open_real_t)(const char *, int, mode_t);
 typedef int (*open2_t)(const char *, int);
-
+/**
+ * 钩子函数定义宏 用于简化生成多个 open 函数的钩子实现
+ * fn##_prev：定义一个静态的函数指针，用于保存原始 open 函数的地址
+ * fn##_stub：定义一个静态的变量，用于保存钩子任务的句柄
+ * 这是一个回调函数，当某个函数被钩住时（hooked），该函数将被调用。
+如果 status_code 是 BYTEHOOK_STATUS_CODE_ORIG_ADDR，则表示保存了原始 open 函数的地址。
+否则，表示钩子已被安装，日志中记录钩子的信息。
+ */
 #define OPEN_DEF(fn)                                                                                         \
   static fn##_t fn##_prev = NULL;                                                                            \
   static bytehook_stub_t fn##_stub = NULL;                                                                   \
