@@ -47,6 +47,8 @@ typedef int (*open2_t)(const char *, int);
           (uintptr_t)prev_func, (uintptr_t)arg);                                                             \
     }                                                                                                        \
   }
+
+//
 OPEN_DEF(open)
 OPEN_DEF(open_real)
 OPEN_DEF(open2)

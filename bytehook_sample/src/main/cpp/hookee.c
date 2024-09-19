@@ -5,6 +5,8 @@
 #include <unistd.h>
 
 #include "android_jni.h"
+#include "xunwind.h"
+#include "simple.h"
 
 #define HOOKEE_JNI_VERSION    JNI_VERSION_1_6
 #define HOOKEE_JNI_CLASS_NAME "com/bytedance/android/bytehook/sample/NativeHookee"
@@ -27,6 +29,12 @@ static void hookee_get_stack(JNIEnv *env, jobject thiz) {
 
 }
 #pragma clang diagnostic pop*/
+
+
+static void xunwind_current_thread(void){
+  LOGI("xunwind_current_thread");
+  xunwind_cfi_log((pid_t)XUNWIND_CURRENT_PROCESS, (pid_t)XUNWIND_CURRENT_THREAD, NULL, HOOKEE_TAG, (android_LogPriority)ANDROID_LOG_INFO, NULL);
+}
 
 static void printFunStack(void){
   JNIEnv *env = getJniEnv();
@@ -56,6 +64,11 @@ static void hookee_test(JNIEnv *env, jobject thiz) {
   LOG("libhookee.so PRE open()");
   int fd = open("/dev/null", O_RDWR);
   printFunStack();
+  //通过信号抓取堆栈
+  //sample_test(SAMPLE_SOLUTION_CFI,false,true,false);
+  xunwind_current_thread();
+
+
   if (fd >= 0) close(fd);
   LOG("libhookee.so POST open()");
 }
@@ -151,6 +164,8 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
     LOGE("ERROR: JNI_OnLoad find class failed");
     return JNI_ERR;
   }
+
+  sample_signal_register();
 
 
   return HOOKEE_JNI_VERSION;
