@@ -19,10 +19,10 @@ public class MyCustomApplication extends Application {
 
         // init bytehook
         int r = ByteHook.init(new ByteHook.ConfigBuilder()
-                .setMode(ByteHook.Mode.AUTOMATIC)
+                .setMode(ByteHook.Mode.AUTOMATIC) //自动和手动的区别
 //                .setMode(ByteHook.Mode.MANUAL)
                 .setDebug(true)
-                .setRecordable(true)
+                .setRecordable(true) //
                 .build());
         Log.i(TAG, "bytehook init, return: " + r);
 
